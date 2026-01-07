@@ -1,0 +1,33 @@
+# --- Node.js ---
+# Ignore les dépendances (très lourd, ne jamais versionner)
+web/node_modules/
+# Fichiers de log d'erreurs npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Environnement ---
+# Fichiers contenant des secrets ou des clés API (si vous en créez plus tard)
+.env
+.env.local
+
+# --- IDE / Éditeurs ---
+# Configuration Visual Studio Code
+.vscode/
+# Configuration IntelliJ/WebStorm
+.idea/
+# Fichiers temporaires d'éditeurs
+*.swp
+*.swo
+
+# --- Système d'exploitation ---
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+desktop.ini
+
+# --- Divers ---
+# Si vous compilez votre code Lua ou produisez des fichiers de build
+/dist
+/build
