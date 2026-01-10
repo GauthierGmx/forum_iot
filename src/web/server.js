@@ -73,7 +73,7 @@ io.on('connection', (socket) => {
         if (orderIndex !== -1) {
             const order = orders[orderIndex];
             const buzzer = buzzers.find(b => b.id === order.buzzer);
-            client.publish(`${BASE_TOPIC}${order.buzzer}`, `produit:-etat:`);
+            client.publish(`${BASE_TOPIC}${order.buzzer}`, `produit:-etat:reset`);
             if (buzzer) buzzer.currentOrderId = null;
             orders.splice(orderIndex, 1); 
             io.emit('update-data', { orders, buzzers });
