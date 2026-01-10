@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>DonkEats | Dashboard</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f3f4f6; --card: #ffffff; --primary: #4f46e5;
+            --pending: #94a3b8; --placed: #ef4444; --cooking: #f59e0b; --done: #10b981;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; padding: 40px; color: #1f2937; }
+        
+        .app-container { max-width: 1200px; margin: 0 auto; }
+        header { margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-weight: 800; font-size: 2rem; margin: 0; color: #111827; }
+
+        .grid { display: grid; grid-template-columns: 350px 1fr; gap: 30px; align-items: start; }
+        
+        /* Colonnes */
+        .column { background: rgba(255, 255, 255, 0.5); border: 1px dashed #cbd5e1; border-radius: 20px; padding: 20px; min-height: 70vh; }
+        .column h2 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+        /* Cartes */
+        .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); transition: all 0.2s ease; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        
+        .order-id { font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
+        .order-name { font-size: 1.1rem; font-weight: 700; margin: 5px 0 15px 0; display: block; }
+
+        /* Status Tags */
+        .badge { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .bg-pending { background: #f1f5f9; color: #64748b; }
+        .bg-placed { background: #fee2e2; color: #991b1b; }
+        .bg-cooking { background: #fef3c7; color: #92400e; }
+        .bg-done { background: #dcfce7; color: #166534; }
+
+        /* Form & Buttons */
+        select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; font-family: inherit; margin-bottom: 10px; outline: none; }
+        button { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        
+        .btn-assign { background: var(--primary); color: white; }
+        .btn-assign:hover { background: #4338ca; }
+        
+        .btn-done { background: var(--done); color: white; }
+        .btn-done:hover { opacity: 0.9; }
+        .btn-done:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
+
+        .btn-reset { background: #1f2937; color: white; }
+
+        .empty-state { text-align: center; color: #94a3b8; margin-top: 40px; font-style: italic; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>DonkEats Kitchen</h1>
+            <div id="status-indicator">● Système Connecté</div>
+        </header>
+
+        <div class="grid">
+            <div class="column">
+                <h2>En attente</h2>
+                <div id="pending-list"></div>
+            </div>
+            <div class="column">
+                <h2>En préparation / Buzzers</h2>
+                <div id="kitchen-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
