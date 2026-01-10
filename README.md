@@ -15,6 +15,12 @@ npm install express mqtt socket.io
 npm audit fix
 ```
 
+Si vous voulez changer l'url du broker mosquitto, allez dans src/web/server.js et modifiez la ligne suivante au début du fichier :
+
+```js
+const MQTT_BROKER = "mqtt://localhost:1808";
+```
+
 ### Lancement
 
 Pour lancer l'application web, dans src/web il faut exécuter :
