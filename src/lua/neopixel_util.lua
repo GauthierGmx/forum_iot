@@ -14,3 +14,17 @@ function placedAnimation()
     end
     neo:update()
 end
+
+function cookingAnimation()
+        for i=0,7 do
+                neo:setPixel(i,255,100,0)
+        end
+        neo:update()
+end
+
+function doneAnimation()
+        for i=0,7 do
+                neo:setPixel(i,0,255,0)
+        end
+        neo:update()
+end
