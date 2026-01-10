@@ -43,7 +43,7 @@ function receivingMessage(length,message)
         -- Reset of the buzzer
         elseif current_state == "reset" then
                 -- LED OFF
-                clearNeoPixel()
+                stopAnimation()
                 cls()
                 produit = ""
                 current_state = ""
@@ -52,8 +52,6 @@ function receivingMessage(length,message)
         end
 end
 
--- Initiate buzzer
-pio.pin.setdir(pio.OUTPUT,pio.GPIO2)
 -- Initiate potentiometer
 -- Only GPIO22 used (button), GPIO21 and GPIO4 not used
 enc = encoder.attach(pio.GPIO4,pio.GPIO21,pio.GPIO22,runOrder)
