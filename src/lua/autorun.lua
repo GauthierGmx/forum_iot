@@ -9,3 +9,9 @@ current_state = ""
 -- Made with access point on a smartphone
 net.wf.setup(net.wf.mode.STA,"SSID","password")
 net.wf.start()
+
+-- Wait for connection
+tmr.delay(5)
+
+-- Launching the application
+dofile("donkeatsport.lua")
