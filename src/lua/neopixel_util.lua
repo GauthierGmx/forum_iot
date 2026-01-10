@@ -1,7 +1,8 @@
--- Initiate Neopixel
-neo = neopixel.attach(neopixel.WS2812B,pio.GPIO23,8)
--- Initiate buzzer
+PIN_NEOPIXEL = pio.GPIO23
 PIN_BUZZER = pio.GPIO2
+-- Initiate Neopixel
+neo = neopixel.attach(neopixel.WS2812B,PIN_NEOPIXEL,8)
+-- Initiate buzzer
 pio.pin.setdir(pio.OUTPUT,PIN_BUZZER)
 
 local anim_timer = nil
