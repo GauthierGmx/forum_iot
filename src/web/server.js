@@ -7,44 +7,51 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+// --- CONFIGURATION ---
 const MQTT_BROKER = "mqtt://localhost:1808"; 
 const BASE_TOPIC = "/donkeatsport/";
 
 const client = mqtt.connect(MQTT_BROKER);
 app.use(express.static('public'));
 
-// État initial
-let orders = [
-    { id: 101, product: "Double Cheese", status: "pending", buzzer: null },
-    { id: 102, product: "Tacos XL", status: "pending", buzzer: null },
-    { id: 103, product: "Salade César", status: "pending", buzzer: null }
-];
+// État du système
+let orders = [];
+let orderCounter = 101;
+let buzzers = [1, 2, 3].map(id => ({ id, currentOrderId: null }));
 
-let buzzers = [1, 2, 3, 4, 5].map(id => ({ id, currentOrderId: null }));
-
+// --- LOGIQUE MQTT ---
 client.on('connect', () => {
+    console.log(`✅ Connecté au Broker MQTT sur ${MQTT_BROKER}`);
     client.subscribe(`${BASE_TOPIC}#`);
-    console.log("MQTT Connecté");
 });
 
 client.on('message', (topic, message) => {
     const payload = message.toString();
     const buzzerNum = parseInt(topic.split('/').pop());
     
-    // Si l'ESP envoie "cooking"
+    // Si l'ESP envoie l'état "cooking" (déclenché par l'utilisateur)
     if (payload.includes("etat:cooking")) {
         const order = orders.find(o => o.buzzer === buzzerNum && o.status === "placed");
         if (order) {
             order.status = "cooking";
             io.emit('update-data', { orders, buzzers });
+            console.log(`Buzzer ${buzzerNum} est passé en mode CUISINE`);
         }
     }
 });
 
+// --- LOGIQUE TEMPS RÉEL (SOCKET.IO) ---
 io.on('connection', (socket) => {
-    // Envoyer les données dès la connexion
     socket.emit('update-data', { orders, buzzers });
 
+    // Créer une nouvelle commande
+    socket.on('create-order', (productName) => {
+        const newOrder = { id: orderCounter++, product: productName, status: "pending", buzzer: null };
+        orders.push(newOrder);
+        io.emit('update-data', { orders, buzzers });
+    });
+
+    // Associer commande à un buzzer
     socket.on('assign-buzzer', ({ orderId, buzzerId }) => {
         const order = orders.find(o => o.id === orderId);
         const buzzer = buzzers.find(b => b.id === buzzerId);
@@ -53,14 +60,15 @@ io.on('connection', (socket) => {
             order.status = "placed";
             order.buzzer = buzzerId;
             buzzer.currentOrderId = orderId;
+            // MQTT: produit:<nom>-etat:placed
             client.publish(`${BASE_TOPIC}${buzzerId}`, `produit:${order.product}-etat:placed`);
             io.emit('update-data', { orders, buzzers });
         }
     });
 
+    // Marquer comme prêt (seulement si "cooking")
     socket.on('set-done', (orderId) => {
         const order = orders.find(o => o.id === orderId);
-        // SÉCURITÉ : Uniquement si l'état est 'cooking'
         if (order && order.status === "cooking") {
             order.status = "done";
             client.publish(`${BASE_TOPIC}${order.buzzer}`, `produit:${order.product}-etat:done`);
@@ -68,17 +76,19 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Remise de la commande et reset
     socket.on('reset-order', (orderId) => {
         const orderIndex = orders.findIndex(o => o.id === orderId);
         if (orderIndex !== -1) {
             const order = orders[orderIndex];
             const buzzer = buzzers.find(b => b.id === order.buzzer);
-            client.publish(`${BASE_TOPIC}${order.buzzer}`, `produit:-etat:reset`);
+            
+            client.publish(`${BASE_TOPIC}${order.buzzer}`, `produit:-etat:`);
             if (buzzer) buzzer.currentOrderId = null;
-            orders.splice(orderIndex, 1); 
+            orders.splice(orderIndex, 1);
             io.emit('update-data', { orders, buzzers });
         }
     });
 });
 
-server.listen(3000, () => console.log('Serveur : http://localhost:3000'));
+server.listen(3000, () => console.log('🚀 Dashboard accessible sur http://localhost:3000'));
