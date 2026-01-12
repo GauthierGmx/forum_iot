@@ -1,5 +1,7 @@
 dofile("neopixel_util.lua")
 
+PIN_BUTTON = pio.GPIO22
+
 function runOrder(direction,counter,button)
         if button == 1 then
                 if (produit ~= "") and (current_state == "placed") and (bool_run == false) then
@@ -43,7 +45,7 @@ function receivingMessage(length,message)
         -- Reset of the buzzer
         elseif current_state == "reset" then
                 -- LED OFF
-                clearNeoPixel()
+                stopAnimation()
                 cls()
                 produit = ""
                 current_state = ""
@@ -52,11 +54,9 @@ function receivingMessage(length,message)
         end
 end
 
--- Initiate buzzer
-pio.pin.setdir(pio.OUTPUT,pio.GPIO2)
 -- Initiate potentiometer
 -- Only GPIO22 used (button), GPIO21 and GPIO4 not used
-enc = encoder.attach(pio.GPIO4,pio.GPIO21,pio.GPIO22,runOrder)
+enc = encoder.attach(pio.GPIO4,pio.GPIO21,PIN_BUTTON,runOrder)
 
 -- DEFINING ID OF THE ESP32 FOR THE PROJECT
 -- Need to be change on every device, so the number is unique
