@@ -23,6 +23,7 @@ Vous pouvez adapter les branchements comme bon vous semble.
 ## Configuration
 
 ### Identifiant du buzzer
+
 Afin de rendre chaque ESP32 unique, il est nécessaire de configurer une ligne vers la fin du fichier "donkeatsport.lua"
 
 ```lua
@@ -61,7 +62,7 @@ const MQTT_BROKER = "mqtt://localhost:1808";
 
 ### Lancement
 
-Pour lancer l'application web, dans src/web il faut exécuter :
+Pour lancer l'application web, se positionner dans src/web puis exécuter la commande suivante :
 
 ```bash
 node server.js
