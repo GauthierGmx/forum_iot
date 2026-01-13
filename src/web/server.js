@@ -21,7 +21,7 @@ let buzzers = [1, 2, 3].map(id => ({ id, currentOrderId: null }));
 
 // --- LOGIQUE MQTT ---
 client.on('connect', () => {
-    console.log(`✅ Connecté au Broker MQTT sur ${MQTT_BROKER}`);
+    console.log(`Connecté au Broker MQTT sur ${MQTT_BROKER}`);
     client.subscribe(`${BASE_TOPIC}#`);
 });
 
@@ -83,7 +83,7 @@ io.on('connection', (socket) => {
             const order = orders[orderIndex];
             const buzzer = buzzers.find(b => b.id === order.buzzer);
             
-            client.publish(`${BASE_TOPIC}${order.buzzer}`, `produit:-etat:`);
+            client.publish(`${BASE_TOPIC}${order.buzzer}`, `produit:-etat:reset`);
             if (buzzer) buzzer.currentOrderId = null;
             orders.splice(orderIndex, 1);
             io.emit('update-data', { orders, buzzers });
@@ -91,4 +91,4 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, () => console.log('🚀 Dashboard accessible sur http://localhost:3000'));
+server.listen(3000, () => console.log('Dashboard accessible sur http://localhost:3000'));
